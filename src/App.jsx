@@ -1,10 +1,15 @@
 import React from 'react';
+import './style.scss'
+import Register from './pages/Register';
+import Login from './pages/login';
+import Home from './pages/Home';
+
 
 const App = () => {
   return (
-    <div>
-      <h1>hello react</h1>
-    </div>
+    <>
+      <Home/>
+    </>
   );
 };
 
