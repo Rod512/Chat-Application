@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import add from '../assets/add.png'
-import { auth } from "../firebase";
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase';
+
+
 
 const Register = () => {
-    const [err,setErr] = useState(false)
+    const [values, setValues] = useState({
+        name : "",
+        email : "",
+        password : ""
+    })
 
-    const handleSubmit = async (e)=> {
+    const [errmassge, setErrmassge] = useState('')
+
+    const handlesubmit = (e)=>{
         e.preventDefault()
-        const displayName = e.target[0].value
-        const email = e.target[1].value
-        const password = e.target[2].value
-        const file = e.target[3].files[0]
 
-        try{
-            const res = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(res)
-        }catch(err){
-            setErr(true)
+        if(!values.name || !values.email || !values.password){
+            setErrmassge("Fill all the fields")
+            return
         }
+        createUserWithEmailAndPassword(auth, values.name, values.email, values.password).then(res=>{
+            console.log(res)
+        }).catch((err)=>console.log('error',err))
     }
 
     return (
@@ -26,17 +31,30 @@ const Register = () => {
             <div className='fromWrapper'>
                 <span className='logo'>DOZE</span>
                 <span className='title'>Register</span>
-                <form onSubmit={handleSubmit}>
-                    <input type="text" placeholder='Display Name'/>
-                    <input type="text" placeholder='email' />
-                    <input type="password" placeholder='password' />
+                <form onSubmit={handlesubmit}>
+                    <input type="text" placeholder='Display Name' onChange={(event)=>{
+                        setValues((prev)=>(
+                            {...prev, name: event.target.value}
+                        ))
+                    }}/>
+                    <input type="email" placeholder='email' onChange={(event)=>{
+                        setValues((prev)=>(
+                            {...prev, email: event.target.value}
+                        ))
+                    }}/>
+                    <input type="password" placeholder='password' onChange={(event)=>{
+                        setValues((prev)=>(
+                            {...prev, password: event.target.value}
+                        ))
+                    }} />
+
                     <input style={{display:'none'}} type="file" id='file' />
                     <label htmlFor="file">
                         <img src={add} alt="" />
                         <span>Add an avatar</span>
                     </label>
                     <button>Sign up</button>
-                    {err && <span>Something went wrong</span>}
+                    
                 </form>
                 <p>You do have an account? Login</p>
 
