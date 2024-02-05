@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
 import add from '../assets/add.png'
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
 
 
+
 const Register = () => {
-    const [values, setValues] = useState({
-        name : "",
-        email : "",
-        password : ""
-    })
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [err, setErr] = useState(false)
 
-    const [errmassge, setErrmassge] = useState('')
-
-    const handlesubmit = (e)=>{
-        e.preventDefault()
-
-        if(!values.name || !values.email || !values.password){
-            setErrmassge("Fill all the fields")
-            return
+    const handlesubmit = async (e)=>{
+        e.preventDefault();
+        try{
+            const res = createUserWithEmailAndPassword(auth,name,email,password)
+        }catch(err){
+            setErr(true)
         }
-        createUserWithEmailAndPassword(auth, values.name, values.email, values.password).then(res=>{
-            console.log(res)
-        }).catch((err)=>console.log('error',err))
+       
     }
 
     return (
@@ -32,21 +28,20 @@ const Register = () => {
                 <span className='logo'>DOZE</span>
                 <span className='title'>Register</span>
                 <form onSubmit={handlesubmit}>
-                    <input type="text" placeholder='Display Name' onChange={(event)=>{
-                        setValues((prev)=>(
-                            {...prev, name: event.target.value}
-                        ))
-                    }}/>
-                    <input type="email" placeholder='email' onChange={(event)=>{
-                        setValues((prev)=>(
-                            {...prev, email: event.target.value}
-                        ))
-                    }}/>
-                    <input type="password" placeholder='password' onChange={(event)=>{
-                        setValues((prev)=>(
-                            {...prev, password: event.target.value}
-                        ))
-                    }} />
+                    <input type="text" placeholder='Display Name'
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required/>
+
+                    <input type="email" placeholder='email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required/>
+
+                    <input type="password" placeholder='password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required/>
 
                     <input style={{display:'none'}} type="file" id='file' />
                     <label htmlFor="file">
@@ -54,6 +49,7 @@ const Register = () => {
                         <span>Add an avatar</span>
                     </label>
                     <button>Sign up</button>
+                    {err && <span>Something wend wrong</span>}
                     
                 </form>
                 <p>You do have an account? Login</p>
